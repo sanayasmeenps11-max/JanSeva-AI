@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ service.title }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">SERVICE APPLICATION DEMO</div><h1>{{ service.title }}</h1><p>{{ service.kind }}. Enter demo details to create your checklist and track its progress.</p></div></div>
+<div class="guide-layout">
+  <section class="content-card">
+    <div class="eyebrow">BEFORE YOU BEGIN</div><h2>What you will need</h2>
+    <div class="guide-list">{% for item in service['items'] %}<div><span>{{ '%02d'|format(loop.index) }}</span><p>{{ item }}</p></div>{% endfor %}</div>
+    <form class="service-start-form" method="post" action="{{ url_for('service_start', slug=service.slug) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>Your name<input name="full_name" maxlength="120" required placeholder="Use a demo name"></label>
+      <label>State or UT<input name="state" maxlength="100" required placeholder="For example, Karnataka"></label>
+      {% if service.slug == 'driving-licence' %}
+      <label>Licence type<select name="category" required><option value="">Choose one</option><option value="Learner licence">Learner licence</option><option value="Permanent driving licence">Permanent driving licence</option></select></label>
+      {% else %}
+      <label>Subsidy category<select name="category" required><option value="">Choose one</option><option value="Education support">Education support</option><option value="Agriculture">Agriculture</option><option value="Housing">Housing</option><option value="Energy or utilities">Energy or utilities</option><option value="Other">Other</option></select></label>
+      {% endif %}
+      <button class="button primary">Create my checklist</button>
+    </form>
+    <p class="footnote">This creates a local demo application only. Check current requirements and apply using the <a href="{{ service.url }}" target="_blank" rel="noopener">official service portal</a>.</p>
+  </section>
+  <aside class="privacy-card"><span>i</span><div><b>Demo privacy</b><p>Use synthetic information. Do not enter Aadhaar, bank information or other sensitive details. No government service receives this data.</p></div></aside>
+</div>
+{% endblock %}

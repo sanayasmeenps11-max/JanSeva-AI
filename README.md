@@ -25,6 +25,18 @@ python app.py
 
 Open http://127.0.0.1:5000. SQLite initializes automatically at `database/janseva.db` and inserts the sample scheme record on first run. The app works without an API key or external AI service. For OCR, install Tesseract OCR for Windows and make sure `tesseract.exe` is available on PATH; if needed configure `pytesseract.pytesseract.tesseract_cmd` in `services/ocr.py`.
 
+## Deploy on Render
+
+This project includes a Docker-based Render Blueprint (`render.yaml`). It installs Tesseract for image OCR, serves Flask through Gunicorn, uses Render's `PORT`, and exposes `/healthz` for health checks. SQLite and uploads are configured to live under `/var/data` on a persistent disk. The Blueprint uses a paid web-service compute plan because Render persistent disks require a paid service. Review the current price in your Render dashboard before approving service creation. The disk is single-instance, so this SQLite setup should remain at one service instance.
+
+1. Put the project in a GitHub repository that you own. Do not upload `.env`, database files, uploaded documents, or secrets. `.gitignore` and `.dockerignore` exclude these local files; keep the generated `FLASK_SECRET_KEY` only in Render's environment.
+2. Sign in to Render and choose **New > Blueprint**. Connect the GitHub repository and select its branch. Render reads `render.yaml`; inspect the service and disk plan/cost before confirming.
+3. Render generates `FLASK_SECRET_KEY` automatically. The Blueprint configures persistent SQLite and upload paths plus secure session cookies. No third-party API key is required.
+4. Wait for the first build and deploy to finish. The Render dashboard will show the public `https://janseva-ai.onrender.com` address if that service name is available; otherwise use the exact URL Render assigns.
+5. Open the public URL and verify the home page, language selector, assistant, service checklists, dashboard, notifications and `/healthz`. Use synthetic data only. Do not upload real identity, bank or other sensitive documents to this public hackathon demo.
+
+Render requires a connected Git provider account and your approval of any paid service or persistent-disk charges. I cannot create the public service or approve billing without access to your Render account. Once the repository is connected and Render completes the deploy, share the assigned URL or any build error and I can help verify/fix it.
+
 ## Try the demo
 
 1. Select **Start an application** and answer with synthetic data. Suggested flow: `Demo Student`, `2nd PUC`, `Karnataka`, `180000`.

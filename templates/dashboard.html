@@ -1,0 +1,28 @@
+{% extends 'base.html' %}{% block title %}Dashboard{% endblock %}{% block content %}<div class="page-heading">
+<div>
+<div class="eyebrow">YOUR JANSEVA SPACE</div>
+<h1>My applications</h1>
+<p>See your drafts and simulated demo submissions in one place.</p>
+</div>
+<form method="post" action="{{ url_for('new_application') }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<button class="button primary"> New application</button>
+</form>
+</div>{% if applications %}<div class="application-list">{% for item in applications %}<a class="application-row" href="{{ url_for('application_detail', application_id=item.id) }}">
+<span class="service-icon teal">
+</span>
+<span class="application-main">
+<b>{{ item.service|title }} assistance</b>
+<small>{{ item.tracking_id }}  Updated {{ item.updated_at[:10] }}</small>
+</span>
+<span class="status {{ item.status }}">{{ item.status|replace('_',' ')|title }}</span>
+<span class="row-arrow">
+</span>
+</a>{% endfor %}</div>{% else %}<div class="empty-state">
+<span>
+</span>
+<h2>No applications yet</h2>
+<p>Start with a guided scholarship assistance demo.</p>
+<a class="button primary" href="{{ url_for('assistant') }}">Start an application </a>
+</div>{% endif %}<p class="footnote">Statuses refer only to records in this demonstration app. No applications are sent to government systems.</p>{% endblock %}
+

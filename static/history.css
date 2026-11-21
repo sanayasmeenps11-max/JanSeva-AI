@@ -1,0 +1,2 @@
+.history-toolbar{display:flex;gap:9px;padding:16px 0 0}.history-button{border:1px solid #cbd9dd;background:#fff;color:var(--navy);border-radius:8px;padding:10px 15px;font:700 12px 'DM Sans',sans-serif;cursor:pointer;box-shadow:0 3px 10px #10283f0d}.history-button:hover{border-color:#087f78;color:#087f78;background:#f0f8f6}.history-button:focus-visible{outline:3px solid #66bdb0;outline-offset:2px}
+@media(max-width:540px){.topbar nav{flex-wrap:wrap;justify-content:flex-end}.history-toolbar{padding:12px 0 0}.history-button{padding:9px 13px}}

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: janseva-ai
+    runtime: docker
+    plan: 0.5c-512mb
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    disk:
+      name: janseva-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: JANSEVA_DB_PATH
+        value: /var/data/janseva.db
+      - key: JANSEVA_UPLOAD_DIR
+        value: /var/data/uploads
+      - key: SESSION_COOKIE_SECURE
+        value: "1"

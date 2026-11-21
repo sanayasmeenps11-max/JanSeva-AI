@@ -17,11 +17,15 @@ from services.notifications import list_notices, list_sources, schedule_refresh
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
-UPLOAD_DIR = ROOT / "uploads"
+UPLOAD_DIR = Path(os.getenv("JANSEVA_UPLOAD_DIR", ROOT / "uploads"))
 UPLOAD_DIR.mkdir(exist_ok=True)
 app = Flask(__name__)
+if os.getenv("RENDER") and not os.getenv("FLASK_SECRET_KEY"):
+    raise RuntimeError("Set FLASK_SECRET_KEY in the Render environment before starting JanSeva AI.")
 app.config.update(SECRET_KEY=os.getenv("FLASK_SECRET_KEY", "local-demo-change-this-key"),
-                  MAX_CONTENT_LENGTH=8 * 1024 * 1024, UPLOAD_FOLDER=str(UPLOAD_DIR))
+                  MAX_CONTENT_LENGTH=8 * 1024 * 1024, UPLOAD_FOLDER=str(UPLOAD_DIR),
+                  SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax",
+                  SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "0") == "1")
 app.teardown_appcontext(close_db)
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
 
@@ -50,7 +54,21 @@ def csrf_context():
         unread = get_db().execute("SELECT COUNT(*) FROM government_notices WHERE first_seen_at > ?", (last_seen,)).fetchone()[0]
     else:
         unread = get_db().execute("SELECT COUNT(*) FROM government_notices").fetchone()[0]
-    return {"csrf_token": session["csrf_token"], "unread_notices": unread}
+    return {"csrf_token": session["csrf_token"], "unread_notices": unread,
+            "language": session.get("language", "en")}
+
+
+@app.get("/language/<language>")
+def set_language(language):
+    if language not in {"en", "kn", "hi"}:
+        abort(404)
+    session["language"] = language
+    # Only redirect back to a URL on this same host.
+    from urllib.parse import urlparse
+    referrer = request.referrer or ""
+    if referrer and urlparse(referrer).netloc == request.host:
+        return redirect(referrer)
+    return redirect(url_for("home"))
 
 
 def active_application(create=False):
@@ -81,6 +99,11 @@ def history(app_id, status, note):
 def home():
     schemes = get_db().execute("SELECT * FROM schemes ORDER BY id").fetchall()
     return render_template("index.html", schemes=schemes)
+
+
+@app.get("/healthz")
+def health_check():
+    return jsonify(status="ok"), 200
 
 
 @app.route("/notifications")
