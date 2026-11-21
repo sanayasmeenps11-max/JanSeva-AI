@@ -1,0 +1,70 @@
+{% extends 'base.html' %}{% block title %}Assistant{% endblock %}{% block content %}<div class="page-heading">
+<div>
+<div class="eyebrow">JANSEVA AI ASSISTANT</div>
+<h1>Lets get started.</h1>
+<p>Share only what is needed for this demo application. Use sample details if you prefer.</p>
+</div>
+<span class="pill"> SESSION SAVED LOCALLY</span>
+</div>
+<div class="assistant-layout">
+<section class="chat-panel">
+<div class="chat-head">
+<span class="avatar">J</span>
+<div>
+<b>JanSeva AI</b>
+<small>Service assistant  English</small>
+</div>
+<span class="online"> Online</span>
+</div>
+<div class="progress">
+<span class="progress-bar" id="progress-bar">
+</span>
+</div>
+<div class="chat-log" id="chat-log" aria-live="polite">
+<div class="bubble bot">Namaskara! I can guide you through a scholarship application demo. First, {{ question }}</div>
+</div>
+<form id="chat-form" class="chat-form">
+<input id="chat-input" autocomplete="off" maxlength="1000" placeholder="Type your answer" aria-label="Your answer">
+<button class="button primary" type="submit">Send <span>
+</span>
+</button>
+</form>
+<div class="chat-foot">Your information stays in this local demo database.</div>
+</section>
+<aside class="side-panel">
+<div class="side-card">
+<div class="eyebrow">APPLICATION PROGRESS</div>
+<h3>Scholarship assistance</h3>
+<div class="progress-steps">
+<div class="current">
+<i>1</i>
+<span>Applicant details</span>
+</div>
+<div>
+<i>2</i>
+<span>Eligibility & documents</span>
+</div>
+<div>
+<i>3</i>
+<span>Review draft</span>
+</div>
+</div>
+<a class="button secondary full" href="{{ url_for('application_detail', application_id=application.id) }}">Open application details</a>
+</div>
+<div class="privacy-card">
+<span>
+</span>
+<div>
+<b>Demo privacy</b>
+<p>Please use synthetic details and sample documents. Avoid Aadhaar, bank details or other sensitive information.</p>
+</div>
+</div>
+<div class="assist-switch">
+<b>Looking for something else?</b>
+<p>Driving licence and subsidy workflows are currently informational demo checklists.</p>
+<a href="{{ url_for('home') }}">See all services </a>
+</div>
+</aside>
+</div>
+<script>window.JANSEVA_PROFILE={{ profile|tojson }};</script>{% endblock %}
+
